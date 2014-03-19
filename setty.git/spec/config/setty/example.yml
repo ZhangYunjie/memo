@@ -1,0 +1,9 @@
+development:
+  foo:
+    env: development
+    bar: baz
+
+production:
+  foo:
+    env: production
+    bar: baz
