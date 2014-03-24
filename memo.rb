@@ -7,6 +7,7 @@ git add -A
 git commit -m "some commetn"
 
 # config/database.yml 修正
+https://github.com/AchillesSatan/setty
 
 heroku create myapp
 git push heroku master
@@ -15,6 +16,7 @@ heroku run console
 
 # mem_cache 
   brew install memcached
+  /usr/local/opt/memcached/bin/memcached
   #Gemfile
     # gem 'memcachier'
     gem 'rack-cache'
@@ -45,6 +47,8 @@ heroku run console
     MyApp::Application.config.session_store ActionDispatch::Session::CacheStore
     MyApp::Application.config.session_options = params
 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 # 调整自动加载路径
   config.autoload_paths += Dir["#{config.root}/lib/autoloads/**/"]
   config.autoload_paths += Dir["#config.root}/lib/workers/**/"]
@@ -53,7 +57,7 @@ heroku run console
   config.paths["config/routes.rb"].concat(Dir[Rails.root.join("config/routes/*.rb")])
 
 # 数据库注释生成工具
-  gem 'annote'
+  gem 'annotate'
   $ bundle exec annotate -i -p before -e tests,fixtures
 
 # 使用redis
@@ -113,8 +117,12 @@ heroku run console
   # 加入Procfile
     bundle exec unicorn -p $PORT -c ./config/unicorn.rb
 
+  # unicorn_rails -c config/unicorn.rb -p 3000 
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 # 使用 New Relic
-  heroku addone:add newrelic:stark
+  heroku addons:add newrelic:stark
 
   # Gemfile
   gem 'newrelic_rpm'
@@ -130,6 +138,8 @@ heroku run console
   heroku config:set RACK_ENV=production
   git commit -m "Added New Relic Plugin"
   git push heroku master
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # 使用asset_sync
   # Gemfile
@@ -199,13 +209,13 @@ heroku run console
   group :developemnt, :test do
     gem 'rspec'
     gem 'rspec-rails'
-    gem 'spork'
+    gem 'spork', '1.0.0rc3'
     gem 'guard'
     gem 'guard-spork'
     gem 'guard-rspec'
     gem 'rb-fsevent'
     gem 'growl'
-    gem 'factory_girls'
+    gem 'factory_girl_rails'
   end
 
   bundle install
@@ -428,3 +438,38 @@ gem 'bootstrap-sass'
   # kindeditor
   # mini_magick
   # carriewave
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# 生成表的关系图
+# Gemfile 
+  gem 'rails-erd'
+
+rake rails-erd
+open erd.pdf
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# 使用pry调试程序
+# Gemfile
+  gem 'pry'
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# view
+= safe_render(inline: @info.content)
+
+# Application spec_helper
+  # renderするけど、エラーが出たら何も出力しない
+  def safe_render(options = {}, locals = {}, &block)
+    begin
+      render options, locals, &block
+    rescue => exception
+      Raven.capture_exception(exception)
+      logger.info exception.inspect
+      logger.info exception.backtrace.grep(/^((?!\/gems\/).)*$/).join("\n")
+      nil
+    end
+  end
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
